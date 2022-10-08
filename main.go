@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"image"
 	"image/color"
 	"image/color/palette"
@@ -34,7 +35,15 @@ func changeSize(size image.Point, rate float64) image.Point {
 }
 
 func main() {
-	reader, err := os.Open("./samples/sosukesuzuki.jpg")
+
+	var (
+		input = flag.String("i", "", "input image path")
+		output = flag.String("o", "", "output image path")
+	)
+
+	flag.Parse()
+
+	reader, err := os.Open(*input)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,7 +55,7 @@ func main() {
 	}
 
 	origSize := img.Bounds().Size()
-	size := changeSize(origSize, 0.5)
+	size := changeSize(origSize, 0.6)
 
 	partyColors := []color.RGBA{
 		{R: 255, G: 0, B: 100, A: 200},
@@ -81,7 +90,7 @@ func main() {
 		opts.Delay = append(opts.Delay, 1)
 	}
 
-	f, _ := os.Create("./dist/sosukesuzuki.gif")
+	f, _ := os.Create(*output)
 	defer f.Close()
 
 	gif.EncodeAll(f, opts)
